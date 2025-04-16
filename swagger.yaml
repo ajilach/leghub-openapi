@@ -296,10 +296,6 @@ components:
     MeasuringPointCreationResponse:
       type: object
       description: Response object for measuring point creation
-      properties:
-        success:
-          type: boolean
-          description: Indicates if the measuring point was successfully created
     LegCreationResponse:
       type: object
       description: Response object for participation creation
@@ -331,6 +327,7 @@ components:
             - INVALID_MEASURING_POINT_NUMBER
             - INVALID_BUSINESS_PARTNER_NUMBER
             - INVALID_EXTERNAL_LEG_ID
+            - INVALID_EIC_CODE
             - MEASURING_POINT_BUSINESS_PARTNER_NUMBER_MISMATCH
             - CONTACT_ADDRESS_BUSINESS_PARTNER_NUMBER_MISMATCH
             - MEASURING_POINT_ADDRESS_MISMATCH
