@@ -19,7 +19,7 @@ tags:
   - name: measuringPoint
     description: Handling measuring points
 paths:
-  /leg:
+  /legs:
     post:
       tags:
         - leg
@@ -50,7 +50,38 @@ paths:
         - apiKey:
             - write:leg
             - read:leg
-  /measuringPoint:
+  # /legs/{legId}:
+  #   put:
+  #     tags:
+  #       - leg
+  #     summary: An existing LEG is updated.
+  #     description: Creates a new participation in the system
+  #     operationId: createParticipation
+  #     requestBody:
+  #       description: Participation object that needs to be created
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/Leg'
+  #       required: true
+  #     responses:
+  #       '200':
+  #         description: Successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/LegCreationResponse'
+  #       '400':
+  #         description: Invalid data provided
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ErrorResponse'
+  #     security:
+  #       - apiKey:
+  #           - write:leg
+  #           - read:leg
+  /measuringPoints:
     post:
       tags:
         - measuringPoint
@@ -81,6 +112,37 @@ paths:
         - apiKey:
             - write:leg
             - read:leg
+  # /measuringPoints/{measuringPointId}:
+  #   put:
+  #     tags:
+  #       - measuringPoint
+  #     summary: A new measuring point is added to a participation
+  #     description: Updates an existing measuring point in the system
+  #     operationId: createMeasuringPoint
+  #     requestBody:
+  #       description: Measuring point object that needs to be created
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/MeasuringPoint'
+  #       required: true
+  #     responses:
+  #       '200':
+  #         description: Successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/MeasuringPointCreationResponse'
+  #       '400':
+  #         description: Invalid data provided
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ErrorResponse'
+  #     security:
+  #       - apiKey:
+  #           - write:leg
+  #           - read:leg
 components:
   schemas:
     Leg:
@@ -302,8 +364,16 @@ components:
       properties:
         externalId:
           type: string
-          example: f4fcfdcf-700c-4364-88ff-d7c6fab02bf6
-          description: An optional external id provided by the electricity network operator
+          example: 123456-000001
+          description: |-
+            An optional external id provided by the electricity network operator. Providing a unique id is
+            highly reccomended per LEG manual or "LEG Handbuch":
+            LEG werden durch eindeutige Nummern identifiziert, die von den Netzbetreibern vergeben werden.
+            Jede LEG-Nummer besteht aus 6 Zeichen zur Kennzeichnung der Netzzugehörigkeit, gefolgt von ei-
+            nem Bindestrich und 6 weiteren Zeichen, die eine eindeutige Identifikation innerhalb des Netzes er-
+            möglichen. Der Netzbetreiber gewährleistet die Eindeutigkeit und Dauerhaftigkeit dieser Nummer. Die
+            Verwendung sprechender Schlüssel ist unzulässig. Die LEG-Nummer wird nur einmal vergeben und
+            bleibt dauerhaft gültig - auch im Falle einer Auflösung der LEG.
     ErrorResponse:
       type: object
       description: Standard error response object
