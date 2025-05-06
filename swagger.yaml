@@ -2,6 +2,9 @@ openapi: 3.0.3
 info:
   title: LEGhub API Docs
   description: |-
+    
+    ## About the LEGhub API
+    
     This documentation defines the endpoints that need to be implemented from the Electricity Network Operator (VNB) to receive Local Electricity Community (LEG) founding and participation data.
     
     The implementation is required to:
@@ -9,6 +12,49 @@ info:
     * For optional properties, the value may be null, or the property may not be present at all.
     * If the response is a 4xx status code, the response body should contain a JSON object with a message property that describes the error.
     * If the response is a 5xx status code or no response is received, the request will be retried after some time.
+
+    ## Testing your Interface
+
+    To test your interface, you may contact us with the email listed below to add your interface to our test system.
+    To do this, we require from you:
+    * the URL where your endpoints are accessible
+    * and either an API key or Basic-Auth credentials that protect your endpoints
+    * Optionally an email where possible errors can be reported to
+    
+    After we have set you up on our test platform, you can go to
+    [https://dev.leghub.jls.digital/auskuenfte/leg-bilden](https://dev.leghub.jls.digital/auskuenfte/leg-bilden)
+    and fill out the LEG founding form with the e-mail address *test@example.com*.
+    If this e-mail address is used, the test system will send a corresponding request
+    directly to your specified endpoint. If you use another e-mail address, the complete founding process will be started instead.
+
+    ## Embedding the LEGhub Forms
+
+    Optionally, you can integrate the vZEV Checker (/vzev), LEG Checker (/leg-check), Founding Form (/founding) and Participation Form (/particpation) into your website using an iframe:
+
+    ```
+    <iframe src="https://industry.leg.digital.deals/vzev?afAcceptLang=de" id="iframe-id-here"></iframe>
+    ```
+
+    Currently, only German (de) is supported via the afAcceptLang URL parameter. More languages will be added in the future.
+
+    The vZEV Checker allows you to preselect the electricity provider by passing the EIC-Code of the provider via a URL parameter (e.g. eicCode=12X-0000000859-C).
+    
+    You can optionally use the following script to dynamically adjust the iframes height based on the embedded forms content:
+
+    ```
+    <script>
+    window.addEventListener("message", function (e) {
+      const height = parseInt(e.data);
+      document.getElementById("iframe-id-here").style.height = height + "px";
+    }, false);
+    </script>
+    ```
+
+    Make sure to update your CSP headers of your Website to allow loading the vZEV Checker via iframe:
+
+    ```
+    Content-Security-Policy: frame-src 'self' https://industry.leg.digital.deals/;
+    ```
 
   contact:
     email: fabian.boesiger@ajila.com
@@ -24,10 +70,8 @@ paths:
       tags:
         - leg
       summary: A new LEG is founded
-      description: Creates a new participation in the system
-      operationId: createParticipation
       requestBody:
-        description: Participation object that needs to be created
+        description: The LEG object that needs to be created.
         content:
           application/json:
             schema:
@@ -50,37 +94,35 @@ paths:
         - apiKey:
             - write:leg
             - read:leg
-  # /legs/{legId}:
-  #   put:
-  #     tags:
-  #       - leg
-  #     summary: An existing LEG is updated.
-  #     description: Creates a new participation in the system
-  #     operationId: createParticipation
-  #     requestBody:
-  #       description: Participation object that needs to be created
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/Leg'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         description: Successful operation
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/LegCreationResponse'
-  #       '400':
-  #         description: Invalid data provided
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/ErrorResponse'
-  #     security:
-  #       - apiKey:
-  #           - write:leg
-  #           - read:leg
+  /legs/{legId}:
+    put:
+      tags:
+        - leg
+      summary: An existing LEG is updated.
+      requestBody:
+        description: The LEG object that needs to be updated.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Leg'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LegCreationResponse'
+        '400':
+          description: Invalid data provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - apiKey:
+            - write:leg
+            - read:leg
   /measuringPoints:
     post:
       tags:
@@ -156,7 +198,12 @@ components:
         - founder
         - eicCode
         - netzebene
+        - vatLiable
       properties:
+        vatLiable:
+          type: boolean
+          description: Indicates if the LEG is liable for VAT. In case it is liable, the UID of the founder will allways be provided.
+          example: true
         leghubId:
           type: string
           format: uuid
@@ -184,6 +231,10 @@ components:
           type: string
           format: date
           description: The date when the participation starts to be active (ISO format)
+        foundingContractBase64:
+          type: string
+          description: The founding contract of the LEG, as a PDF and encoded in base64. As soon as this is provided, the LEG is active from an legal perspective.
+          example: JVBERi0xLjQKJcfs...
         referenceAddress:
           $ref: '#/components/schemas/Address'
         netzebene:
