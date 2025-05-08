@@ -37,7 +37,7 @@ info:
 
     Currently, only German (de) is supported via the afAcceptLang URL parameter. More languages will be added in the future.
 
-    The vZEV Checker allows you to preselect the electricity provider by passing the EIC-Code of the provider via a URL parameter (e.g. eicCode=12X-0000000859-C).
+    The vZEV Checker allows you to preselect the electricity provider by passing the VNB via a URL parameter (e.g. vnb=ckw).
     
     You can optionally use the following script to dynamically adjust the iframes height based on the embedded forms content:
 
