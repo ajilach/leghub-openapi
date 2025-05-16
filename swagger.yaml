@@ -18,7 +18,7 @@ info:
     To test your interface, you may contact us with the email listed below to add your interface to our test system.
     To do this, we require from you:
     * the URL where your endpoints are accessible
-    * and either an API key or Basic-Auth credentials that protect your endpoints
+    * either an API key, Basic-Auth credentials, or a OAuth client ID, client secret and token endpoint that protect your endpoints
     * Optionally an email where possible errors can be reported to
     
     After we have set you up on our test platform, you can go to
@@ -91,7 +91,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       security:
-        - apiKey:
+        - ApiKeyAuth:
+            - write:leg
+            - read:leg
+        - BasicAuth:
+            - write:leg
+            - read:leg
+        - BearerAuth:
             - write:leg
             - read:leg
   /legs/{legId}:
@@ -120,7 +126,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       security:
-        - apiKey:
+        - ApiKeyAuth:
+            - write:leg
+            - read:leg
+        - BasicAuth:
+            - write:leg
+            - read:leg
+        - BearerAuth:
             - write:leg
             - read:leg
   /measuringPoints:
@@ -151,7 +163,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       security:
-        - apiKey:
+        - ApiKeyAuth:
+            - write:leg
+            - read:leg
+        - BasicAuth:
+            - write:leg
+            - read:leg
+        - BearerAuth:
             - write:leg
             - read:leg
   # /measuringPoints/{measuringPointId}:
@@ -456,7 +474,13 @@ components:
             - OTHER
           description: The type of error that occurred
   securitySchemes:
-    apiKey:
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
+    ApiKeyAuth:
       type: apiKey
       in: header
       name: X-Api-Key
