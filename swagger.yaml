@@ -385,6 +385,10 @@ components:
             - VNB
             - FOUNDER
           description: Whether the founder or the VNB is responsible for billing
+        eicCodeBillingServiceProvider:
+          type: string
+          example: 12X1234
+          description: EIC code of the billing service provider (optional)
     MeasuringPoint:
       type: object
       description: Represents a measuring point in the system
