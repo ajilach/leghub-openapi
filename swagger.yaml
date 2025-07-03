@@ -35,7 +35,7 @@ info:
     <iframe src="https://industry.leg.digital.deals/vzev?afAcceptLang=de" id="iframe-id-here"></iframe>
     ```
 
-    Currently, only German (de) is supported via the afAcceptLang URL parameter. More languages will be added in the future.
+    Currently, only German (de) and French (fr) is supported via the afAcceptLang URL parameter. More languages will be added in the future.
 
     The vZEV Checker allows you to preselect the electricity provider by passing the VNB via a URL parameter (e.g. vnb=ckw).
     
