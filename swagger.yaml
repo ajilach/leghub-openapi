@@ -23,9 +23,13 @@ info:
     
     After we have set you up on our test platform, you can go to
     [https://dev.leghub.jls.digital/auskuenfte/leg-bilden](https://dev.leghub.jls.digital/auskuenfte/leg-bilden)
-    and fill out the LEG founding form with the e-mail address *test@example.com*.
-    If this e-mail address is used, the test system will send a corresponding request
-    directly to your specified endpoint. If you use another e-mail address, the complete founding process will be started instead.
+
+    ### Magic Values for Testing
+
+    There are some magic values that you can use to make testing the LEG Founding and Participation more convenient:
+    * The phone number *+41234567890* skips the Swisscom Sign process.
+    * The email address  *test@example.com* send a request directly to the specified endpoint without the need to approve the request via mail.
+    * Use the first- and last name *Marty McFly* to travel back to the future and overwrite the current date with a date in the past.
 
     ## Embedding the LEGhub Forms
 
