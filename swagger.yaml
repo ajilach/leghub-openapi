@@ -221,6 +221,7 @@ components:
         - eicCode
         - netzebene
         - vatLiable
+        - startingDate
       properties:
         vatLiable:
           type: boolean
@@ -308,6 +309,7 @@ components:
       required:
         - firstName
         - lastName
+        - phone
         - email
         - address
         - businessPartnerNumber
@@ -402,6 +404,9 @@ components:
         - measuringPointNumber
         - address
         - owner
+        - role
+        - startingDate
+        - power
       properties:
         leghubLegId:
           type: string
