@@ -283,7 +283,7 @@ components:
       description: Represents a physical address
       required:
         - street
-        - houseNumber
+        - streetNumber
         - zipCode
         - city
       properties:
@@ -291,7 +291,7 @@ components:
           type: string
           example: Hauptstrasse
           description: Street name
-        houseNumber:
+        streetNumber:
           type: string
           example: "12"
           description: House number
