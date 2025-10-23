@@ -390,6 +390,7 @@ components:
           enum:
             - VNB
             - FOUNDER
+            - GRID_BY_VNB_ENERGY_BY_FOUNDER
           description: Whether the founder or the VNB is responsible for billing
         eicCodeBillingServiceProvider:
           type: string
