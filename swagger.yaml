@@ -36,7 +36,7 @@ info:
     Optionally, you can integrate the vZEV Checker (/vzev), LEG Checker (/leg-check), Founding Form (/founding) and Participation Form (/particpation) into your website using an iframe:
 
     ```
-    <iframe src="https://industry.leg.digital.deals/vzev?afAcceptLang=de" id="iframe-id-here"></iframe>
+    <iframe src="https://industry.leg.digital.deals/vzev?afAcceptLang=de" id="iframe-id-here" sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads"></iframe>
     ```
 
     Currently, only German (de) and French (fr) is supported via the afAcceptLang URL parameter. More languages will be added in the future.
