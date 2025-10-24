@@ -408,7 +408,12 @@ components:
         - role
         - startingDate
         - power
+        - contractBase64
       properties:
+        contractBase64:
+          type: string
+          description: The contract of the User, as a PDF and encoded in base64.
+          example: JVBERi0xLjQKJcfs...
         leghubLegId:
           type: string
           format: uuid
