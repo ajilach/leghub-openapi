@@ -35,6 +35,8 @@ info:
 
     Optionally, you can integrate the vZEV Checker (/vzev), LEG Checker (/leg-check), Founding Form (/founding) and Participation Form (/particpation) into your website using an iframe:
 
+    (To integrate the test form, use the URL https://test.industry.leg.digital.deals instead)
+
     ```
     <iframe src="https://industry.leg.digital.deals/vzev?afAcceptLang=de" id="iframe-id-here" sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads"></iframe>
     ```
