@@ -378,11 +378,11 @@ components:
         individualFixedPrice:
           type: number
           format: float
-          description: Only provided if the pricingModel is INDIVIDUAL_FIXED_PRICE
+          description: Only provided if the pricingModel is INDIVIDUAL_FIXED_PRICE. Unit is Rp./kWh.
         customizedStandardTariffDiscount:
           type: number
           format: float
-          description: Only provided if the pricingModel is CUSTOMIZED_STANDARD_TARIFF
+          description: Only provided if the pricingModel is CUSTOMIZED_STANDARD_TARIFF. Unit is Rp./kWh.
         minimumTermMonths:
           type: integer
           minimum: 0
