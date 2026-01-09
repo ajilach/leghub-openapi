@@ -393,7 +393,9 @@ components:
       required:
         - measuringPointNumber
         - referenceAddress
+        - owner
         - role
+        - startingDate
         - power
       properties:
         measuringPointNumber:
@@ -405,12 +407,17 @@ components:
           enum:
             - CONSUMPTION
             - PRODUCTION
+        startingDate:
+          type: string
+          format: date
         power:
           type: number
           format: float
           description: The production/consumption power (depending on the measuring point type) of the measuring point in kW
         referenceAddress:
           $ref: '#/components/schemas/Address'
+        owner:
+          $ref: '#/components/schemas/Contact'
     Participant:
       type: object
       description: Represents a participant in a LEG with their measuring points
