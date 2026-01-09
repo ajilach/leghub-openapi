@@ -1,0 +1,524 @@
+openapi: 3.0.3
+info:
+  title: LEGhub API Docs
+  description: |-
+    
+    ## About the LEGhub API
+    
+    This documentation defines the endpoints that need to be implemented from the Electricity Network Operator (VNB) to receive Local Electricity Community (LEG) founding and participation data.
+    
+    The implementation is required to:
+    * Handle future, unknown properties in addition to the properties that are listed here.
+    * For optional properties, the value may be null, or the property may not be present at all.
+    * If the response is a 4xx status code, the response body should contain an array of error objects with details about the validation errors.
+    * If the response is a 5xx status code or no response is received, the request will be retried after some time.
+
+    ## Testing your Interface
+
+    To test your interface, you may contact us with the email listed below to add your interface to our test system.
+    To do this, we require from you:
+    * the URL where your endpoints are accessible
+    * either an API key, Basic-Auth credentials, or a OAuth client ID, client secret and token endpoint that protect your endpoints
+    * Optionally an email where possible errors can be reported to
+    
+    After we have set you up on our test platform, you can go to
+    [https://dev.leghub.jls.digital/auskuenfte/leg-bilden](https://dev.leghub.jls.digital/auskuenfte/leg-bilden)
+
+    ### Magic Values for Testing
+
+    There are some magic values that you can use to make testing the LEG Founding and Participation more convenient:
+    * The phone number *+41234567890* skips the Swisscom Sign process.
+    * The email address  *test@example.com* send a request directly to the specified endpoint without the need to approve the request via mail.
+    * Use the first- and last name *Marty McFly* to travel back to the future and overwrite the current date with a date in the past.
+
+    ## Embedding the LEGhub Forms
+
+    Optionally, you can integrate the vZEV Checker (/vzev), LEG Checker (/leg-check), Founding Form (/founding) and Participation Form (/particpation) into your website using an iframe:
+
+    (To integrate the test form, use the URL https://test.industry.leg.digital.deals instead)
+
+    ```
+    <iframe src="https://industry.leg.digital.deals/vzev?afAcceptLang=de" id="iframe-id-here" sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads"></iframe>
+    ```
+
+    Currently, only German (de) and French (fr) is supported via the afAcceptLang URL parameter. More languages will be added in the future.
+
+    The vZEV Checker allows you to preselect the electricity provider by passing the VNB via a URL parameter (e.g. vnb=ckw).
+    
+    You can optionally use the following script to dynamically adjust the iframes height based on the embedded forms content:
+
+    ```
+    <script>
+    window.addEventListener("message", function (e) {
+      const height = parseInt(e.data);
+      document.getElementById("iframe-id-here").style.height = height + "px";
+    }, false);
+    </script>
+    ```
+
+    Make sure to update your CSP headers of your Website to allow loading the vZEV Checker via iframe:
+
+    ```
+    Content-Security-Policy: frame-src 'self' https://industry.leg.digital.deals/;
+    ```
+
+  contact:
+    email: fabian.boesiger@ajila.com
+  version: 2.0.0
+tags:
+  - name: leg
+    description: Everything about the leg.
+  - name: participant
+    description: Handling participants and their measuring points
+paths:
+  /legs:
+    post:
+      tags:
+        - leg
+      summary: A new LEG is founded
+      parameters:
+        - name: validateOnly
+          in: query
+          description: When set to true, only validates the request without persisting data
+          required: false
+          schema:
+            type: boolean
+            default: false
+      requestBody:
+        description: The LEG object that needs to be created.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Leg'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LegCreationResponse'
+        '400':
+          description: Invalid data provided
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth:
+            - write:leg
+            - read:leg
+        - BasicAuth:
+            - write:leg
+            - read:leg
+        - BearerAuth:
+            - write:leg
+            - read:leg
+  /participants:
+    post:
+      tags:
+        - participant
+      summary: Add a new participant to a LEG
+      description: Creates a new participant with their measuring points in an existing LEG
+      operationId: createParticipant
+      parameters:
+        - name: validateOnly
+          in: query
+          description: When set to true, only validates the request without persisting data
+          required: false
+          schema:
+            type: boolean
+            default: false
+      requestBody:
+        description: Participant object with measuring points to be created
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Participant'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantCreationResponse'
+        '400':
+          description: Invalid data provided
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth:
+            - write:leg
+            - read:leg
+        - BasicAuth:
+            - write:leg
+            - read:leg
+        - BearerAuth:
+            - write:leg
+            - read:leg
+  # /measuringPoints/{measuringPointId}:
+  #   put:
+  #     tags:
+  #       - measuringPoint
+  #     summary: A new measuring point is added to a participation
+  #     description: Updates an existing measuring point in the system
+  #     operationId: createMeasuringPoint
+  #     requestBody:
+  #       description: Measuring point object that needs to be created
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/MeasuringPoint'
+  #       required: true
+  #     responses:
+  #       '200':
+  #         description: Successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/MeasuringPointCreationResponse'
+  #       '400':
+  #         description: Invalid data provided
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ErrorResponse'
+  #     security:
+  #       - apiKey:
+  #           - write:leg
+  #           - read:leg
+components:
+  schemas:
+    Leg:
+      type: object
+      description: Represents a participation (LEG or VZEV)
+      required:
+        - pricing
+        - discountLevel
+        - referenceAddress
+        - founder
+        - eicCode
+        - netzebene
+        - vatLiable
+        - startingDate
+      properties:
+        measuringPoints:
+          type: array
+          description: Array of measuring points associated with this LEG
+          items:
+            $ref: '#/components/schemas/MeasuringPoint'
+        vatLiable:
+          type: boolean
+          description: Indicates if the LEG is liable for VAT. In case it is liable, the UID of the founder will allways be provided.
+          example: true
+        leghubId:
+          type: string
+          format: uuid
+          example: f4fcfdcf-700c-4364-88ff-d7c6fab02bf6
+          description: Unique identifier for the participation in LEGhub
+        externalId:
+          type: string
+          description: Only available if an external leg ID was returned in the creation response
+          example: null
+        name:
+          type: string
+          example: Bauernhof Rüti
+          description: Name of the participation
+        eicCode:
+          type: string
+          example: 12X1234
+          description: X-Code des VNB
+        discountLevel:
+          type: string
+          enum:
+            - HIGH
+            - LOW
+          description: The discount level applied to the participation
+        startingDate:
+          type: string
+          format: date
+          description: The date when the participation starts to be active (ISO format)
+        foundingContractBase64:
+          type: string
+          description: The founding contract of the LEG, as a PDF and encoded in base64. As soon as this is provided, the LEG is active from an legal perspective.
+          example: JVBERi0xLjQKJcfs...
+        referenceAddress:
+          $ref: '#/components/schemas/Address'
+        netzebene:
+          $ref: '#/components/schemas/Netzebene'
+        pricing:
+          $ref: '#/components/schemas/Pricing'
+        founder:
+          $ref: '#/components/schemas/Contact'
+    Netzebene:
+      type: object
+      description: Network level information
+      required:
+        - trafostation
+      properties:
+        trafostation:
+          type: string
+          description: Transformer station identifier
+        unterwerk:
+          type: string
+          description: Substation identifier (optional)
+    Address:
+      type: object
+      description: Represents a physical address
+      required:
+        - street
+        - streetNumber
+        - zipCode
+        - city
+      properties:
+        street:
+          type: string
+          example: Hauptstrasse
+          description: Street name
+        streetNumber:
+          type: string
+          example: "12"
+          description: House number
+        zipCode:
+          type: string
+          example: "8000"
+          description: Postal code
+        city:
+          type: string
+          example: Zürich
+          description: City name
+    Contact:
+      type: object
+      description: Represents contact information for a person or company
+      required:
+        - firstName
+        - lastName
+        - phone
+        - email
+        - address
+        - businessPartnerNumber
+        - legalForm
+      properties:
+        businessPartnerNumber:
+          type: string
+          example: "123456789"
+          description: The business partner number (Kundennummer) of the contact at the VNB
+        firstName:
+          type: string
+          example: Max
+          description: First name of the contact person
+        lastName:
+          type: string
+          example: Mustermann
+          description: Last name of the contact person
+        email:
+          type: string
+          format: email
+          example: max.muster@example.com
+          description: Email address
+        phone:
+          type: string
+          example: +41 79 123 45 67
+          description: Phone number
+        uid:
+          type: string
+          example: CHE-123.456.789
+          description: VAT number (UID)
+        legalForm:
+          type: string
+          enum:
+            - PRIVATPERSON
+            - UNTERNEHMEN
+            - LOKALE_BEHOERDE
+            - VEREIN
+            - GENOSSENSCHAFT
+            - STIFTUNG
+            - ANDERE
+          description: Legal form of the contact
+        legalName:
+          type: string
+          example: Muster AG
+          description: Legal name (only provided when legalForm is not PRIVATE_PERSON)
+        address:
+          $ref: '#/components/schemas/Address'
+    Pricing:
+      type: object
+      description: Represents pricing information for a participation
+      required:
+        - pricingModel
+        - minimumTermMonths
+        - billingResponsibility
+      properties:
+        pricingModel:
+          type: string
+          enum:
+            - STANDARD_TARIFF
+            - INDIVIDUAL_FIXED_PRICE
+            - CUSTOMIZED_STANDARD_TARIFF
+            - CUSTOMIZED_PRIZING_MODEL
+          description: The pricing model used for the participation
+        individualFixedPrice:
+          type: number
+          format: float
+          description: Only provided if the pricingModel is INDIVIDUAL_FIXED_PRICE. Unit is Rp./kWh.
+        customizedStandardTariffDiscount:
+          type: number
+          format: float
+          description: Only provided if the pricingModel is CUSTOMIZED_STANDARD_TARIFF. Unit is Rp./kWh.
+        minimumTermMonths:
+          type: integer
+          minimum: 0
+          description: The minimum term in months for joining the participation
+        billingResponsibility:
+          type: string
+          enum:
+            - VNB
+            - FOUNDER
+            - GRID_BY_VNB_ENERGY_BY_FOUNDER
+          description: Whether the founder or the VNB is responsible for billing
+        eicCodeBillingServiceProvider:
+          type: string
+          example: 12X1234
+          description: EIC code of the billing service provider (optional)
+    MeasuringPoint:
+      type: object
+      description: Represents a measuring point in the system
+      required:
+        - measuringPointNumber
+        - referenceAddress
+        - role
+        - power
+      properties:
+        measuringPointNumber:
+          type: string
+          example: CH1234567890123456789012345678901
+          description: The measuring point number as provided by the electricity network operator
+        role:
+          type: string
+          enum:
+            - CONSUMPTION
+            - PRODUCTION
+        power:
+          type: number
+          format: float
+          description: The production/consumption power (depending on the measuring point type) of the measuring point in kW
+        referenceAddress:
+          $ref: '#/components/schemas/Address'
+    Participant:
+      type: object
+      description: Represents a participant in a LEG with their measuring points
+      required:
+        - contact
+        - measuringPoints
+        - startingDate
+        - contractBase64
+      properties:
+        leghubLegId:
+          type: string
+          format: uuid
+          example: f4fcfdcf-700c-4364-88ff-d7c6fab02bf6
+          description: The LEG ID as provided by LEGhub
+        externalLegId:
+          type: string
+          description: Only available if an external LEG ID was returned in the creation response
+          example: null
+        leghubParticipantId:
+          type: string
+          format: uuid
+          example: a5bcfdcf-800c-5464-99ff-e8d7gbc03cg7
+          description: Unique identifier for the participant in LEGhub
+        externalParticipantId:
+          type: string
+          description: Optional external participant ID provided by the electricity network operator
+          example: null
+        startingDate:
+          type: string
+          format: date
+          description: The date when the participant starts to be active (ISO format)
+        contractBase64:
+          type: string
+          description: The contract of the participant, as a PDF and encoded in base64.
+          example: JVBERi0xLjQKJcfs...
+        contact:
+          $ref: '#/components/schemas/Contact'
+        measuringPoints:
+          type: array
+          description: Array of measuring points associated with this participant
+          items:
+            $ref: '#/components/schemas/MeasuringPoint'
+    ParticipantCreationResponse:
+      type: object
+      description: Response object for participant creation
+      properties:
+        externalId:
+          type: string
+          example: 123456-000001-P001
+          description: An optional external id provided by the electricity network operator for the participant
+    LegCreationResponse:
+      type: object
+      description: Response object for participation creation
+      properties:
+        externalId:
+          type: string
+          example: 123456-000001
+          description: |-
+            An optional external id provided by the electricity network operator. Providing a unique id is
+            highly reccomended per LEG manual or "LEG Handbuch":
+            LEG werden durch eindeutige Nummern identifiziert, die von den Netzbetreibern vergeben werden.
+            Jede LEG-Nummer besteht aus 6 Zeichen zur Kennzeichnung der Netzzugehörigkeit, gefolgt von ei-
+            nem Bindestrich und 6 weiteren Zeichen, die eine eindeutige Identifikation innerhalb des Netzes er-
+            möglichen. Der Netzbetreiber gewährleistet die Eindeutigkeit und Dauerhaftigkeit dieser Nummer. Die
+            Verwendung sprechender Schlüssel ist unzulässig. Die LEG-Nummer wird nur einmal vergeben und
+            bleibt dauerhaft gültig - auch im Falle einer Auflösung der LEG.
+    ErrorResponse:
+      type: object
+      description: Standard error response object
+      required:
+        - errorCode
+      properties:
+        message:
+          type: string
+          example: Invalid data provided
+          description: A message describing the error
+        clientMessage:
+          type: string
+          example: Die Kundennummer ist unbekannt.
+          description: A message that can be shown to the user
+        measuringPointNumber:
+          type: string
+          example: CH1234567890123456789012345678901
+          description: Optional measuring point number associated with the error
+        errorCode:
+          type: string
+          enum:
+            - INVALID_STARTING_DATE
+            - INVALID_ADDRESS
+            - INVALID_PRICING
+            - INVALID_MEASURING_POINT_NUMBER
+            - INVALID_BUSINESS_PARTNER_NUMBER
+            - INVALID_EXTERNAL_LEG_ID
+            - INVALID_EIC_CODE
+            - MEASURING_POINT_BUSINESS_PARTNER_NUMBER_MISMATCH
+            - CONTACT_ADDRESS_BUSINESS_PARTNER_NUMBER_MISMATCH
+            - MEASURING_POINT_ADDRESS_MISMATCH
+            - INAPPROPRIATE_NAME
+            - OTHER
+          description: The type of error that occurred
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Api-Key

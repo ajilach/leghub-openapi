@@ -1,19 +1,185 @@
-<!-- HTML for static distribution bundle build -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Swagger UI</title>
-    <link rel="stylesheet" type="text/css" href="dist/swagger-ui.css" />
-    <link rel="stylesheet" type="text/css" href="dist/index.css" />
-    <link rel="icon" type="image/png" href="dist/favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="dist/favicon-16x16.png" sizes="16x16" />
-  </head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEGhub API Documentation</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 800px;
+        width: 100%;
+        padding: 60px 40px;
+        text-align: center;
+      }
+
+      h1 {
+        color: #333;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+
+      .subtitle {
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 50px;
+      }
+
+      .versions {
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+      }
+
+      .version-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 40px 30px;
+        min-width: 280px;
+        flex: 1;
+        max-width: 350px;
+        text-decoration: none;
+        color: white;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .version-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .version-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .version-card:hover::before {
+        opacity: 1;
+      }
+
+      .version-number {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .version-label {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        opacity: 0.9;
+        margin-bottom: 10px;
+      }
+
+      .version-description {
+        font-size: 1rem;
+        opacity: 0.95;
+        line-height: 1.5;
+      }
+
+      .version-card.v1 {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      }
+
+      .version-card.v2 {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      }
+
+      .badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.3);
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin-top: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .info {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-top: 30px;
+        padding-top: 30px;
+        border-top: 1px solid #e5e7eb;
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .container {
+          padding: 40px 30px;
+        }
+
+        .versions {
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        .version-card {
+          min-width: 100%;
+        }
+      }
+    </style>
+  </head>
   <body>
-    <div id="swagger-ui"></div>
-    <script src="dist/swagger-ui-bundle.js" charset="UTF-8"> </script>
-    <script src="dist/swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
-    <script src="dist/swagger-initializer.js" charset="UTF-8"> </script>
+    <div class="container">
+      <h1>LEGhub API Documentation</h1>
+      <p class="subtitle">Choose your API version</p>
+
+      <div class="versions">
+        <a href="v1/" class="version-card v1">
+          <span class="version-label">Version</span>
+          <span class="version-number">1.0</span>
+          <p class="version-description">Current stable version</p>
+          <span class="badge">Stable</span>
+        </a>
+
+        <a href="v2/" class="version-card v2">
+          <span class="version-label">Version</span>
+          <span class="version-number">2.0</span>
+          <p class="version-description">Latest features and updates</p>
+          <span class="badge">Latest</span>
+        </a>
+      </div>
+
+      <div class="info">
+        <p><strong>About:</strong> This documentation defines the endpoints for Electricity Network Operators (VNB) to receive Local Electricity Community (LEG) founding and participation data.</p>
+      </div>
+    </div>
   </body>
 </html>
