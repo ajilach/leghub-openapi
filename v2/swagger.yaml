@@ -69,6 +69,8 @@ info:
     In case the validation result is "valid" or "invalid", we know that the the request is valid and manual check via mail is not required.
     However, if the validation result is "unknown", the founding or participation request will still be sent for manual check via mail to the VNB.
     The "unknown" result may only be returned if the `validateOnly` parameter is set to true.
+    If the response is 200 OK and `validateOnly` is true, the externalId field in the response can be null, as no data was persisted.
+    The externalId will only be persisted if `validateOnly` is false.
 
   contact:
     email: fabian.boesiger@ajila.com
@@ -239,7 +241,7 @@ components:
           description: Unique identifier for the participation in LEGhub
         externalId:
           type: string
-          description: Only available if an external leg ID was returned in the creation response
+          description: Only available if an external leg ID was returned in the creation response.
           example: null
         name:
           type: string
@@ -481,7 +483,7 @@ components:
         externalId:
           type: string
           example: 123456-000001-P001
-          description: An optional external id provided by the electricity network operator for the participant
+          description: An optional external id provided by the electricity network operator for the participant. Will only be persisted if `validateOnly` is false.
     LegCreationResponse:
       type: object
       description: Response object for participation creation
@@ -490,7 +492,7 @@ components:
           type: string
           example: 123456-000001
           description: |-
-            An optional external id provided by the electricity network operator. Providing a unique id is
+            An optional external id provided by the electricity network operator. Will only be persisted if `validateOnly` is false. Providing a unique id is
             highly reccomended per LEG manual or "LEG Handbuch":
             LEG werden durch eindeutige Nummern identifiziert, die von den Netzbetreibern vergeben werden.
             Jede LEG-Nummer besteht aus 6 Zeichen zur Kennzeichnung der Netzzugehörigkeit, gefolgt von ei-
