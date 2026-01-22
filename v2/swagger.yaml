@@ -62,6 +62,14 @@ info:
     Content-Security-Policy: frame-src 'self' https://industry.leg.digital.deals/;
     ```
 
+    ## Automatic Validation
+
+    With the new LEGhub API version 2, we introduce automatic validation of incoming LEG founding and participation requests.
+    If the `validateOnly` query parameter is set to true, the request MUST only be validated and no data MUST be persisted.
+    In case the validation result is "valid" or "invalid", we know that the the request is valid and manual check via mail is not required.
+    However, if the validation result is "unknown", the founding or participation request will still be sent for manual check via mail to the VNB.
+    The "unknown" result may only be returned if the `validateOnly` parameter is set to true.
+
   contact:
     email: fabian.boesiger@ajila.com
   version: 2.0.0
@@ -106,6 +114,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: |
+            Validation could not determine if the request is valid ("unknown" result). May only be returned if the validateOnly flag is set. If this is set, the request will still be sent for manual check via mail.
       security:
         - ApiKeyAuth:
             - write:leg
@@ -153,6 +164,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: |
+            Validation could not determine if the request is valid ("unknown" result). May only be returned if the validateOnly flag is set. If this is set, the request will still be sent for manual check via mail.
       security:
         - ApiKeyAuth:
             - write:leg
