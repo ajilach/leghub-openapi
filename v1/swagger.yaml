@@ -314,13 +314,12 @@ components:
         - phone
         - email
         - address
-        - businessPartnerNumber
         - legalForm
       properties:
         businessPartnerNumber:
           type: string
           example: "123456789"
-          description: The business partner number (Kundennummer) of the contact at the VNB
+          description: The business partner number (Kundennummer) of the contact at the VNB. Is required if the founder is producer or consumer, but not in the case of an empty hull.
         firstName:
           type: string
           example: Max
