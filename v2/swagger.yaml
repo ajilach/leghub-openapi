@@ -290,7 +290,6 @@ components:
       description: Represents a physical address
       required:
         - street
-        - streetNumber
         - zipCode
         - city
       properties:

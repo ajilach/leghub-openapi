@@ -285,7 +285,6 @@ components:
       description: Represents a physical address
       required:
         - street
-        - streetNumber
         - zipCode
         - city
       properties:
@@ -296,7 +295,7 @@ components:
         streetNumber:
           type: string
           example: "12"
-          description: House number
+          description: House number, optional as some addresses do not have a house number
         zipCode:
           type: string
           example: "8000"
