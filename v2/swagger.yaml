@@ -439,7 +439,6 @@ components:
         - contact
         - measuringPoints
         - startingDate
-        - contractBase64
       properties:
         leghubLegId:
           type: string
@@ -465,7 +464,7 @@ components:
           description: The date when the participant starts to be active (ISO format)
         contractBase64:
           type: string
-          description: The contract of the participant, as a PDF and encoded in base64.
+          description: The contract of the participant, as a PDF and encoded in base64. Is always sent when validateOnly is false, and never sent when validateOnly is true.
           example: JVBERi0xLjQKJcfs...
         contact:
           $ref: '#/components/schemas/Contact'
