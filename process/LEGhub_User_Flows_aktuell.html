@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>LEGhub User-Flows – Aktueller Stand</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1c2230; --muted:#5b6677; --line:#e2e6ec;
+    --user:#dbeafe; --hub:#ffe6cc; --vnb:#eceff3; --founder:#d9f2e3;
+    --sign:#f3d9f7; --erp:#fff3c4; --mail:#d3f0ef; --admin:#fde0e0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Urbanist",-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  header{padding:28px 32px 18px;border-bottom:1px solid var(--line);background:var(--card)}
+  h1{font-size:24px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:14px}
+  main{max-width:1280px;margin:0 auto;padding:24px 20px 80px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:22px 0;box-shadow:0 1px 2px rgba(20,30,50,.04)}
+  h2{font-size:19px;margin:0 0 4px}
+  h2 .tag{font-size:12px;font-weight:600;color:var(--muted);margin-left:8px}
+  .lead{color:var(--muted);font-size:14px;margin:0 0 16px;max-width:920px}
+  .mermaid{width:100%;overflow-x:auto;text-align:center}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 16px;margin:6px 0 4px}
+  .legend span{display:inline-flex;align-items:center;font-size:13px;color:var(--muted)}
+  .legend i{width:14px;height:14px;border-radius:4px;margin-right:6px;border:1px solid rgba(0,0,0,.12)}
+  .glossary{font-size:12.5px;color:var(--muted);margin-top:12px}
+  footer{color:var(--muted);font-size:12px;text-align:center;padding:10px}
+</style>
+</head>
+<body>
+<header>
+  <h1>LEGhub User-Flows – Aktueller Stand</h1>
+  <div class="sub">Geschäftsprozess für die Gründung und den Beitritt zu einer Lokalen Elektrizitätsgemeinschaft (LEG) · Stand 2026-06-12</div>
+</header>
+<main>
+
+  <section>
+    <h2>Legende</h2>
+    <p class="lead">Die Farben zeigen, wer im jeweiligen Schritt am Zug ist.</p>
+    <div class="legend">
+      <span><i style="background:var(--user)"></i>Antragsteller (Gründer / Teilnehmer)</span>
+      <span><i style="background:var(--hub)"></i>LEGhub (Plattform)</span>
+      <span><i style="background:var(--founder)"></i>Gründer / LEG-Vertretung (Freigabe)</span>
+      <span><i style="background:var(--vnb)"></i>VNB (Netzbetreiber)</span>
+      <span><i style="background:var(--sign)"></i>Elektronische Signatur</span>
+      <span><i style="background:var(--erp)"></i>Speicherung &amp; Ablage</span>
+      <span><i style="background:var(--mail)"></i>E-Mail an Beteiligte</span>
+      <span><i style="background:var(--admin)"></i>Admin</span>
+    </div>
+    <p class="glossary"><b>LEG</b> = Lokale Elektrizitätsgemeinschaft · <b>VNB</b> = Verteilnetzbetreiber (Netzbetreiber)</p>
+  </section>
+
+  <section>
+    <h2>Flow 1 · Gründung<span class="tag">Eine Person gründet eine neue LEG</span></h2>
+    <p class="lead">Der Antragsteller füllt das Formular aus; der Netzbetreiber (VNB) gibt die Gründung frei – je nach VNB automatisch oder manuell per E-Mail-Link. Sobald ein Produzent beteiligt ist, wird der Vertrag elektronisch unterzeichnet. Danach wird die LEG gespeichert und der Antragsteller informiert.</p>
+    <div class="mermaid">
+flowchart TD
+  A["Antragsteller: Formular ausfüllen, Übersicht prüfen, absenden"]:::user
+  B["LEGhub erstellt den Vertrag und legt die Gründung an"]:::hub
+  AUTO{"Gibt der VNB automatisch frei?"}:::hub
+  MREQ["E-Mails: Bestätigung an Antragsteller (inkl. Vertrag)<br/>+ Prüfanfrage an VNB"]:::mail
+  VREV{"VNB prüft die Gründung"}:::vnb
+  REJ["Absage-E-Mail an Antragsteller"]:::mail
+  ACC["VNB gibt die Gründung frei"]:::vnb
+  HULL{"Ist ein Produzent beteiligt?"}:::hub
+  SIGN["Gründer unterzeichnet den Vertrag<br/>elektronisch"]:::sign
+  PERS["LEGhub speichert die LEG beim VNB und im LEGhub<br/>Vertrag und Quittung werden abgelegt"]:::erp
+  RES{"Speicherung erfolgreich?"}:::erp
+  OK["Bestätigungs-E-Mail an Antragsteller<br/>LEG ist angelegt"]:::mail
+  CLI["Behebbarer Fehler: Absage mit Begründung<br/>Antragsteller korrigiert und sendet erneut"]:::mail
+  ERR["Technischer Fehler: Hinweis-E-Mail an VNB<br/>VNB kann die Speicherung erneut auslösen"]:::mail
+  ADMIN["Admin kann die Gründung zurücksetzen / neu starten"]:::admin
+
+  A --> B --> AUTO
+  AUTO -- "ja" --> ACC
+  AUTO -- "nein" --> MREQ --> VREV
+  VREV -- "Ablehnen" --> REJ
+  VREV -- "Freigeben" --> ACC
+  ACC --> HULL
+  HULL -- "nein (leere Hülle / nur Vertretung)" --> PERS
+  HULL -- "ja (Gründer = Produzent)" --> SIGN
+  SIGN --> PERS
+  PERS --> RES
+  RES -- "ja" --> OK
+  RES -- "nein, behebbar" --> CLI
+  RES -- "nein, technisch" --> ERR
+  CLI -. "neu absenden" .-> A
+  ERR -. "erneut auslösen" .-> PERS
+  ADMIN -. "neu starten" .-> B
+
+  classDef user fill:#dbeafe,stroke:#7da7d9,color:#13233b;
+  classDef hub fill:#ffe6cc,stroke:#e0a86b,color:#3b2a13;
+  classDef vnb fill:#eceff3,stroke:#aab4c2,color:#222a36;
+  classDef founder fill:#d9f2e3,stroke:#7fc6a0,color:#143226;
+  classDef sign fill:#f3d9f7,stroke:#c98fd6,color:#3a153f;
+  classDef erp fill:#fff3c4,stroke:#dcc25a,color:#3b3413;
+  classDef mail fill:#d3f0ef,stroke:#7fc7c4,color:#143432;
+  classDef admin fill:#fde0e0,stroke:#e09a9a,color:#3b1313;
+    </div>
+  </section>
+
+  <section>
+    <h2>Flow 2 · Teilnahme<span class="tag">Eine Person tritt einer bestehenden LEG bei (Produzent, Konsument oder weitere)</span></h2>
+    <p class="lead">Doppelte Freigabe: zuerst der Gründer bzw. die LEG-Vertretung (immer manuell), danach der Netzbetreiber (je nach VNB automatisch oder manuell). Anschliessend wird der Vertrag elektronisch unterzeichnet und der Beitritt gespeichert. Sobald die LEG dadurch aktiv wird, erhält der Gründer eine zusätzliche Mitteilung.</p>
+    <div class="mermaid">
+flowchart TD
+  A["Antragsteller: vorausgefülltes Formular ausfüllen, prüfen, absenden"]:::user
+  B["LEGhub legt den Beitritt an und erstellt eine Vertragsvorschau"]:::hub
+  MREQ["E-Mails: Bestätigung an Teilnehmer (inkl. Vertragsvorschau)<br/>+ Prüfanfrage an Gründer / LEG-Vertretung"]:::mail
+  FREV{"Gründer / LEG-Vertretung prüft den Beitritt"}:::founder
+  FREJ["Absage-E-Mail an Teilnehmer"]:::mail
+  FACC["Gründer gibt den Beitritt frei"]:::founder
+  AUTOV{"Gibt der VNB automatisch frei?"}:::hub
+  MVNB["Prüfanfrage an VNB (E-Mail-Link)"]:::mail
+  VREV{"VNB prüft den Beitritt"}:::vnb
+  VREJ["Absage-E-Mails an Teilnehmer und Gründer"]:::mail
+  VACC["VNB gibt den Beitritt frei"]:::vnb
+  SIGN["Teilnehmer unterzeichnet den Vertrag elektronisch<br/>(bestehender Gründungsvertrag wird wiederverwendet)"]:::sign
+  PERS["LEGhub speichert den Teilnehmer beim VNB und im LEGhub<br/>Vertrag und Quittung werden abgelegt"]:::erp
+  RES{"Speicherung erfolgreich?"}:::erp
+  OK["Bestätigungs-E-Mails an Teilnehmer und Gründer"]:::mail
+  ACT{"Wird die LEG damit aktiv?"}:::erp
+  LEGACT["Zusätzliche E-Mail an Gründer: LEG ist aktiv"]:::mail
+  CLI["Behebbarer Fehler: Absage mit Begründung<br/>an Teilnehmer und Gründer"]:::mail
+  ERR["Technischer Fehler: Hinweis-E-Mail an VNB<br/>VNB kann die Speicherung erneut auslösen"]:::mail
+  ADMIN["Admin kann den Beitritt zurücksetzen / neu starten"]:::admin
+
+  A --> B --> MREQ --> FREV
+  FREV -- "Ablehnen" --> FREJ
+  FREV -- "Freigeben" --> FACC --> AUTOV
+  AUTOV -- "ja" --> VACC
+  AUTOV -- "nein" --> MVNB --> VREV
+  VREV -- "Ablehnen" --> VREJ
+  VREV -- "Freigeben" --> VACC --> SIGN
+  SIGN --> PERS
+  PERS --> RES
+  RES -- "ja" --> OK
+  RES -- "nein, behebbar" --> CLI
+  RES -- "nein, technisch" --> ERR
+  OK --> ACT
+  ACT -- "ja" --> LEGACT
+  CLI -. "neu absenden" .-> A
+  ERR -. "erneut auslösen" .-> PERS
+  ADMIN -. "neu starten" .-> B
+
+  classDef user fill:#dbeafe,stroke:#7da7d9,color:#13233b;
+  classDef hub fill:#ffe6cc,stroke:#e0a86b,color:#3b2a13;
+  classDef vnb fill:#eceff3,stroke:#aab4c2,color:#222a36;
+  classDef founder fill:#d9f2e3,stroke:#7fc6a0,color:#143226;
+  classDef sign fill:#f3d9f7,stroke:#c98fd6,color:#3a153f;
+  classDef erp fill:#fff3c4,stroke:#dcc25a,color:#3b3413;
+  classDef mail fill:#d3f0ef,stroke:#7fc7c4,color:#143432;
+  classDef admin fill:#fde0e0,stroke:#e09a9a,color:#3b1313;
+    </div>
+  </section>
+
+  <footer>LEGhub – Übersicht der Gründungs- und Teilnahme-Prozesse.</footer>
+</main>
+<script>
+  mermaid.initialize({startOnLoad:true, theme:'base', flowchart:{useMaxWidth:true, htmlLabels:true, curve:'basis'}, securityLevel:'loose',
+    themeVariables:{fontFamily:'Urbanist, Segoe UI, sans-serif', fontSize:'14px', lineColor:'#8a93a3'}});
+</script>
+</body>
+</html>
