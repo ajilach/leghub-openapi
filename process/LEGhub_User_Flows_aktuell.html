@@ -9,158 +9,311 @@
   :root{
     --bg:#f7f8fa; --card:#ffffff; --ink:#1c2230; --muted:#5b6677; --line:#e2e6ec;
     --user:#dbeafe; --hub:#ffe6cc; --vnb:#eceff3; --founder:#d9f2e3;
-    --sign:#f3d9f7; --erp:#fff3c4; --mail:#d3f0ef; --admin:#fde0e0;
+    --sign:#f3d9f7; --erp:#fff3c4; --mail:#d3f0ef; --api:#dce9fb;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:"Urbanist",-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
   header{padding:28px 32px 18px;border-bottom:1px solid var(--line);background:var(--card)}
   h1{font-size:24px;margin:0 0 4px}
   .sub{color:var(--muted);font-size:14px}
-  main{max-width:1280px;margin:0 auto;padding:24px 20px 80px}
+  main{max-width:1320px;margin:0 auto;padding:24px 20px 80px}
   section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:22px 0;box-shadow:0 1px 2px rgba(20,30,50,.04)}
   h2{font-size:19px;margin:0 0 4px}
   h2 .tag{font-size:12px;font-weight:600;color:var(--muted);margin-left:8px}
-  .lead{color:var(--muted);font-size:14px;margin:0 0 16px;max-width:920px}
-  .mermaid{width:100%;overflow-x:auto;text-align:center}
+  .lead{color:var(--muted);font-size:14px;margin:0 0 16px;max-width:980px}
+  .flowbox{width:100%;overflow-x:auto;text-align:center;cursor:zoom-in;min-height:40px}
+  .zoomhint{font-size:12px;color:var(--muted);text-align:right;margin-top:-6px}
+  .controls{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;margin:0}
+  .controls label{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:14px;color:var(--ink)}
+  .controls input{width:16px;height:16px;cursor:pointer}
+  .paneltitle{font-weight:700;font-size:14px;color:var(--ink)}
+  #ctrlBar{position:sticky;top:8px;z-index:50;padding:12px 18px;box-shadow:0 4px 14px rgba(20,30,50,.10);backdrop-filter:saturate(1.1)}
+  #ctrlBar .legend{margin:10px 0 0;padding-top:10px;border-top:1px solid var(--line)}
+  #zoomOverlay{display:none;position:fixed;inset:0;background:rgba(15,20,30,.82);z-index:1000}
+  #zoomOverlay.open{display:block}
+  #zoomInner{position:absolute;inset:60px 16px 16px;overflow:hidden;background:#fff;border-radius:12px;cursor:grab}
+  #zoomInner.grabbing{cursor:grabbing}
+  #zoomInner svg{max-width:none !important;height:auto;display:block;will-change:transform}
+  #zoomClose{position:absolute;top:14px;right:18px;z-index:1001;font-size:18px;line-height:1;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:9px;width:40px;height:40px;cursor:pointer}
+  #zoomHintTop{position:absolute;top:20px;left:20px;color:#eef1f5;font-size:13px}
   .legend{display:flex;flex-wrap:wrap;gap:10px 16px;margin:6px 0 4px}
   .legend span{display:inline-flex;align-items:center;font-size:13px;color:var(--muted)}
   .legend i{width:14px;height:14px;border-radius:4px;margin-right:6px;border:1px solid rgba(0,0,0,.12)}
   .glossary{font-size:12.5px;color:var(--muted);margin-top:12px}
+  .glossary b{color:var(--ink)}
+  code{background:#eef1f5;padding:1px 5px;border-radius:5px;font-size:12px}
   footer{color:var(--muted);font-size:12px;text-align:center;padding:10px}
 </style>
 </head>
 <body>
 <header>
-  <h1>LEGhub User-Flows – Aktueller Stand</h1>
-  <div class="sub">Geschäftsprozess für die Gründung und den Beitritt zu einer Lokalen Elektrizitätsgemeinschaft (LEG) · Stand 2026-06-12</div>
+  <h1>LEGhub User-Flows</h1>
+  <div class="sub">Stand 2026-06-12</div>
 </header>
 <main>
 
-  <section>
-    <h2>Legende</h2>
-    <p class="lead">Die Farben zeigen, wer im jeweiligen Schritt am Zug ist.</p>
+  <section id="ctrlBar">
+    <div class="controls">
+      <span class="paneltitle">Anzeigen:</span>
+      <label><input type="checkbox" id="chkApi"> API-Endpoints (v1 / v2 / Innosolv, Validierung)</label>
+      <label><input type="checkbox" id="chkTest"> Testing-Shortcuts</label>
+      <label><input type="checkbox" id="chkAdmin"> Admin-Endpoints</label>
+    </div>
     <div class="legend">
-      <span><i style="background:var(--user)"></i>Antragsteller (Gründer / Teilnehmer)</span>
-      <span><i style="background:var(--hub)"></i>LEGhub (Plattform)</span>
-      <span><i style="background:var(--founder)"></i>Gründer / LEG-Vertretung (Freigabe)</span>
-      <span><i style="background:var(--vnb)"></i>VNB (Netzbetreiber)</span>
+      <span><i style="background:var(--user)"></i>Aktion des Antragstellers</span>
+      <span><i style="background:var(--founder)"></i>Aktion Gründer / LEG-Vertretung</span>
+      <span><i style="background:var(--vnb)"></i>Aktion VNB (Netzbetreiber)</span>
+      <span><i style="background:var(--hub)"></i>LEGhub – Verarbeitung / Entscheid</span>
+      <span><i style="background:var(--mail)"></i>E-Mail an Beteiligte</span>
       <span><i style="background:var(--sign)"></i>Elektronische Signatur</span>
       <span><i style="background:var(--erp)"></i>Speicherung &amp; Ablage</span>
-      <span><i style="background:var(--mail)"></i>E-Mail an Beteiligte</span>
-      <span><i style="background:var(--admin)"></i>Admin</span>
+      <span><i style="background:var(--api)"></i>API-Endpoint-Detail</span>
+      <span><i style="background:#e3f4e1;border:1px dashed #2e7d32"></i>Test-Shortcut (grün gestrichelt)</span>
+      <span><i style="background:#fde0e0;border:1px dashed #c62828"></i>Admin-Endpoint (rot gestrichelt)</span>
     </div>
-    <p class="glossary"><b>LEG</b> = Lokale Elektrizitätsgemeinschaft · <b>VNB</b> = Verteilnetzbetreiber (Netzbetreiber)</p>
   </section>
 
   <section>
     <h2>Flow 1 · Gründung<span class="tag">Eine Person gründet eine neue LEG</span></h2>
-    <p class="lead">Der Antragsteller füllt das Formular aus; der Netzbetreiber (VNB) gibt die Gründung frei – je nach VNB automatisch oder manuell per E-Mail-Link. Sobald ein Produzent beteiligt ist, wird der Vertrag elektronisch unterzeichnet. Danach wird die LEG gespeichert und der Antragsteller informiert.</p>
-    <div class="mermaid">
-flowchart TD
-  A["Antragsteller: Formular ausfüllen, Übersicht prüfen, absenden"]:::user
-  B["LEGhub erstellt den Vertrag und legt die Gründung an"]:::hub
-  AUTO{"Gibt der VNB automatisch frei?"}:::hub
-  MREQ["E-Mails: Bestätigung an Antragsteller (inkl. Vertrag)<br/>+ Prüfanfrage an VNB"]:::mail
-  VREV{"VNB prüft die Gründung"}:::vnb
-  REJ["Absage-E-Mail an Antragsteller"]:::mail
-  ACC["VNB gibt die Gründung frei"]:::vnb
-  HULL{"Ist ein Produzent beteiligt?"}:::hub
-  SIGN["Gründer unterzeichnet den Vertrag<br/>elektronisch"]:::sign
-  PERS["LEGhub speichert die LEG beim VNB und im LEGhub<br/>Vertrag und Quittung werden abgelegt"]:::erp
-  RES{"Speicherung erfolgreich?"}:::erp
-  OK["Bestätigungs-E-Mail an Antragsteller<br/>LEG ist angelegt"]:::mail
-  CLI["Behebbarer Fehler: Absage mit Begründung<br/>Antragsteller korrigiert und sendet erneut"]:::mail
-  ERR["Technischer Fehler: Hinweis-E-Mail an VNB<br/>VNB kann die Speicherung erneut auslösen"]:::mail
-  ADMIN["Admin kann die Gründung zurücksetzen / neu starten"]:::admin
-
-  A --> B --> AUTO
-  AUTO -- "ja" --> ACC
-  AUTO -- "nein" --> MREQ --> VREV
-  VREV -- "Ablehnen" --> REJ
-  VREV -- "Freigeben" --> ACC
-  ACC --> HULL
-  HULL -- "nein (leere Hülle / nur Vertretung)" --> PERS
-  HULL -- "ja (Gründer = Produzent)" --> SIGN
-  SIGN --> PERS
-  PERS --> RES
-  RES -- "ja" --> OK
-  RES -- "nein, behebbar" --> CLI
-  RES -- "nein, technisch" --> ERR
-  CLI -. "neu absenden" .-> A
-  ERR -. "erneut auslösen" .-> PERS
-  ADMIN -. "neu starten" .-> B
-
-  classDef user fill:#dbeafe,stroke:#7da7d9,color:#13233b;
-  classDef hub fill:#ffe6cc,stroke:#e0a86b,color:#3b2a13;
-  classDef vnb fill:#eceff3,stroke:#aab4c2,color:#222a36;
-  classDef founder fill:#d9f2e3,stroke:#7fc6a0,color:#143226;
-  classDef sign fill:#f3d9f7,stroke:#c98fd6,color:#3a153f;
-  classDef erp fill:#fff3c4,stroke:#dcc25a,color:#3b3413;
-  classDef mail fill:#d3f0ef,stroke:#7fc7c4,color:#143432;
-  classDef admin fill:#fde0e0,stroke:#e09a9a,color:#3b1313;
-    </div>
+    <div id="flow1" class="flowbox"></div>
+    <div class="zoomhint">⤢ Klicken zum Öffnen · dann Mausrad-Zoom &amp; Ziehen</div>
   </section>
 
   <section>
-    <h2>Flow 2 · Teilnahme<span class="tag">Eine Person tritt einer bestehenden LEG bei (Produzent, Konsument oder weitere)</span></h2>
-    <p class="lead">Doppelte Freigabe: zuerst der Gründer bzw. die LEG-Vertretung (immer manuell), danach der Netzbetreiber (je nach VNB automatisch oder manuell). Anschliessend wird der Vertrag elektronisch unterzeichnet und der Beitritt gespeichert. Sobald die LEG dadurch aktiv wird, erhält der Gründer eine zusätzliche Mitteilung.</p>
-    <div class="mermaid">
-flowchart TD
-  A["Antragsteller: vorausgefülltes Formular ausfüllen, prüfen, absenden"]:::user
-  B["LEGhub legt den Beitritt an und erstellt eine Vertragsvorschau"]:::hub
-  MREQ["E-Mails: Bestätigung an Teilnehmer (inkl. Vertragsvorschau)<br/>+ Prüfanfrage an Gründer / LEG-Vertretung"]:::mail
-  FREV{"Gründer / LEG-Vertretung prüft den Beitritt"}:::founder
-  FREJ["Absage-E-Mail an Teilnehmer"]:::mail
-  FACC["Gründer gibt den Beitritt frei"]:::founder
-  AUTOV{"Gibt der VNB automatisch frei?"}:::hub
-  MVNB["Prüfanfrage an VNB (E-Mail-Link)"]:::mail
-  VREV{"VNB prüft den Beitritt"}:::vnb
-  VREJ["Absage-E-Mails an Teilnehmer und Gründer"]:::mail
-  VACC["VNB gibt den Beitritt frei"]:::vnb
-  SIGN["Teilnehmer unterzeichnet den Vertrag elektronisch<br/>(bestehender Gründungsvertrag wird wiederverwendet)"]:::sign
-  PERS["LEGhub speichert den Teilnehmer beim VNB und im LEGhub<br/>Vertrag und Quittung werden abgelegt"]:::erp
-  RES{"Speicherung erfolgreich?"}:::erp
-  OK["Bestätigungs-E-Mails an Teilnehmer und Gründer"]:::mail
-  ACT{"Wird die LEG damit aktiv?"}:::erp
-  LEGACT["Zusätzliche E-Mail an Gründer: LEG ist aktiv"]:::mail
-  CLI["Behebbarer Fehler: Absage mit Begründung<br/>an Teilnehmer und Gründer"]:::mail
-  ERR["Technischer Fehler: Hinweis-E-Mail an VNB<br/>VNB kann die Speicherung erneut auslösen"]:::mail
-  ADMIN["Admin kann den Beitritt zurücksetzen / neu starten"]:::admin
-
-  A --> B --> MREQ --> FREV
-  FREV -- "Ablehnen" --> FREJ
-  FREV -- "Freigeben" --> FACC --> AUTOV
-  AUTOV -- "ja" --> VACC
-  AUTOV -- "nein" --> MVNB --> VREV
-  VREV -- "Ablehnen" --> VREJ
-  VREV -- "Freigeben" --> VACC --> SIGN
-  SIGN --> PERS
-  PERS --> RES
-  RES -- "ja" --> OK
-  RES -- "nein, behebbar" --> CLI
-  RES -- "nein, technisch" --> ERR
-  OK --> ACT
-  ACT -- "ja" --> LEGACT
-  CLI -. "neu absenden" .-> A
-  ERR -. "erneut auslösen" .-> PERS
-  ADMIN -. "neu starten" .-> B
-
-  classDef user fill:#dbeafe,stroke:#7da7d9,color:#13233b;
-  classDef hub fill:#ffe6cc,stroke:#e0a86b,color:#3b2a13;
-  classDef vnb fill:#eceff3,stroke:#aab4c2,color:#222a36;
-  classDef founder fill:#d9f2e3,stroke:#7fc6a0,color:#143226;
-  classDef sign fill:#f3d9f7,stroke:#c98fd6,color:#3a153f;
-  classDef erp fill:#fff3c4,stroke:#dcc25a,color:#3b3413;
-  classDef mail fill:#d3f0ef,stroke:#7fc7c4,color:#143432;
-  classDef admin fill:#fde0e0,stroke:#e09a9a,color:#3b1313;
-    </div>
+    <h2>Flow 2 · Teilnahme<span class="tag">Eine Person tritt einer bestehenden LEG bei</span></h2>
+    <div id="flow2" class="flowbox"></div>
+    <div class="zoomhint">⤢ Klicken zum Öffnen · dann Mausrad-Zoom &amp; Ziehen</div>
   </section>
 
-  <footer>LEGhub – Übersicht der Gründungs- und Teilnahme-Prozesse.</footer>
 </main>
 <script>
-  mermaid.initialize({startOnLoad:true, theme:'base', flowchart:{useMaxWidth:true, htmlLabels:true, curve:'basis'}, securityLevel:'loose',
-    themeVariables:{fontFamily:'Urbanist, Segoe UI, sans-serif', fontSize:'14px', lineColor:'#8a93a3'}});
+  mermaid.initialize({startOnLoad:false, theme:'base', flowchart:{useMaxWidth:true, htmlLabels:true, curve:'basis'}, securityLevel:'loose',
+    themeVariables:{fontFamily:'Urbanist, Segoe UI, sans-serif', fontSize:'13px', lineColor:'#8a93a3'}});
+
+  const CLASSDEFS=[
+    'classDef user fill:#dbeafe,stroke:#7da7d9,color:#13233b;',
+    'classDef hub fill:#ffe6cc,stroke:#e0a86b,color:#3b2a13;',
+    'classDef vnb fill:#eceff3,stroke:#aab4c2,color:#222a36;',
+    'classDef founder fill:#d9f2e3,stroke:#7fc6a0,color:#143226;',
+    'classDef sign fill:#f3d9f7,stroke:#c98fd6,color:#3a153f;',
+    'classDef erp fill:#fff3c4,stroke:#dcc25a,color:#3b3413;',
+    'classDef mail fill:#d3f0ef,stroke:#7fc7c4,color:#143432;',
+    'classDef test fill:#e3f4e1,stroke:#2e7d32,color:#13351a;',
+    'classDef admin fill:#fde0e0,stroke:#c62828,color:#3b1313;',
+    'classDef api fill:#dce9fb,stroke:#5b86c9,color:#16263f;'
+  ];
+
+  const FLOW1={ header:'flowchart TD', nodes:[
+    ['as1["Formular ausfüllen,<br/>Übersicht prüfen, absenden"]:::user','core'],
+    ['h1["Vertrag erstellen,<br/>Gründung anlegen"]:::hub','core'],
+    ['dAuto{"Automatische VNB-Freigabe aktiviert?<br/>(vnbAutoAcceptFounding)"}:::hub','core'],
+    ['dV2{"VNB-Endpoint<br/>Version?"}:::hub','api'],
+    ['val["Validierung am VNB-Endpoint v2<br/>(validateOnly-Aufruf)"]:::api','api'],
+    ['vRes{"Validierungs-<br/>Ergebnis"}:::hub','api'],
+    ['hsend["LEGhub leitet manuelle<br/>Freigabe ein"]:::hub','core'],
+    ['hm1["E-Mail an Antragsteller: Eingang bestätigt<br/>Anhang: Vertrag (Vorschau) + Quittung"]:::mail','core'],
+    ['hm2["E-Mail an VNB: Prüfanfrage<br/>Anhang: Quittung"]:::mail','core'],
+    ['v1{"VNB prüft die Gründung<br/>(Link acceptVnb / rejectVnb)"}:::vnb','core'],
+    ['hmr["E-Mail an Antragsteller: Absage durch VNB<br/>Anhang: Quittung"]:::mail','core'],
+    ['acc["VNB-Freigabe erteilt"]:::vnb','core'],
+    ['dProd{"Ist ein Produzent<br/>beteiligt?"}:::hub','core'],
+    ['as2["Gründer unterzeichnet den<br/>Vertrag elektronisch (Swisscom Sign)"]:::sign','core'],
+    ['h4["LEG speichern<br/>(VNB-System + JLS / LEGhub-CMS)"]:::erp','core'],
+    ['apiF["Endpoint-Aufrufe je Tenant:<br/>LEGhub-API v1 / v2 / Innosolv-API<br/>(Innosolv: Vertrag + Quittung ins DMS)"]:::api','api'],
+    ['dOk{"Speicherung<br/>erfolgreich?"}:::hub','core'],
+    ['hm3["E-Mail an Antragsteller: Gründung bestätigt<br/>Anhang: Quittung"]:::mail','core'],
+    ['hm4["E-Mail an Antragsteller: Absage mit Begründung<br/>Anhang: Quittung"]:::mail','core'],
+    ['as3["Korrigieren und<br/>erneut absenden"]:::user','core'],
+    ['hm5["E-Mail an VNB: technischer Fehler<br/>Anhang: Quittung"]:::mail','core'],
+    ['vrtry["VNB: Speicherung erneut auslösen<br/>(Link retryVnb)"]:::vnb','core'],
+    ['t1["Test-Shortcut (nur Nicht-Prod):<br/>E-Mail test@example.com<br/>→ Freigabe übersprungen"]:::test','test'],
+    ['t2["Test-Shortcut (nur Nicht-Prod):<br/>Telefon +41234567890 (oder Konfig ohne Signatur)<br/>→ Signatur übersprungen"]:::test','test'],
+    ['adRestart["Admin · POST /restartFounding<br/>(Header X-Api-Key)"]:::admin','admin'],
+    ['adPersist["Admin · POST /persistFoundingLeghub<br/>(X-Api-Key) – nur JLS / LEGhub-CMS"]:::admin','admin'],
+    ['adSig["Admin · POST /signatureProcessCompleted<br/>(X-Api-Key) – Signatur-Abschluss manuell"]:::admin','admin']
+  ], edges:[
+    ['as1 --> h1','core'],
+    ['h1 -- "LEG: DRAFT" --> dAuto','core'],
+    ['dAuto -- "ja" --> acc','core'],
+    ['dAuto -- "nein" --> dV2','api'],
+    ['dV2 -- "v2" --> val','api'],
+    ['val --> vRes','api'],
+    ['vRes -- "ohne Fehler" --> acc','api'],
+    ['vRes -- "VALIDATE_VIA_MAIL" --> hsend','api'],
+    ['vRes -- "Fehler" --> hmr','api'],
+    ['dV2 -- "v1 / Innosolv" --> hsend','api'],
+    ['dAuto -- "nein (manuell)" --> hsend','noapi'],
+    ['hsend --> hm1','core'],
+    ['hsend -- "LEG: WAITING_FOR_VNB_APPROVAL" --> hm2','core'],
+    ['hm2 --> v1','core'],
+    ['v1 -- "freigeben" --> acc','core'],
+    ['v1 -- "ablehnen" --> hmr','core'],
+    ['acc --> dProd','core'],
+    ['dProd -- "ja → LEG: WAITING_FOR_SIGNATURE" --> as2','core'],
+    ['dProd -- "nein (leere Hülle / nur Vertretung)" --> h4','core'],
+    ['as2 --> h4','core'],
+    ['h4 --> dOk','core'],
+    ['h4 -.-> apiF','api'],
+    ['dOk -- "Erfolg → LEG: WAITING_FOR_PRODUCER (leere Hülle)<br/>bzw. WAITING_FOR_CONSUMER (mit Produzent)" --> hm3','core'],
+    ['dOk -- "nein, behebbar" --> hm4','core'],
+    ['hm4 --> as3','core'],
+    ['as3 --> as1','core'],
+    ['dOk -- "nein, technisch → LEG: ERROR" --> hm5','core'],
+    ['hm5 --> vrtry','core'],
+    ['vrtry --> h4','core'],
+    ['h1 -.-> t1','test','test'],
+    ['t1 -.-> acc','test','test'],
+    ['dProd -.-> t2','test','test'],
+    ['t2 -.-> h4','test','test'],
+    ['adRestart -.-> h1','admin','admin'],
+    ['adPersist -.-> h4','admin','admin'],
+    ['adSig -.-> h4','admin','admin']
+  ]};
+
+  const FLOW2={ header:'flowchart TD', nodes:[
+    ['as1["Vorausgefülltes Formular<br/>ausfüllen, prüfen, absenden"]:::user','core'],
+    ['h1["Beitritt anlegen,<br/>Vertragsvorschau erstellen"]:::hub','core'],
+    ['hm1["E-Mail an Teilnehmer: Eingang bestätigt<br/>Anhang: Vertrag (Vorschau) + Quittung"]:::mail','core'],
+    ['hm2["E-Mail an Gründer/LEG-Vertretung: Prüfanfrage<br/>Anhang: Quittung"]:::mail','core'],
+    ['g1{"Gründer / LEG-Vertretung prüft<br/>(Link acceptFounder / rejectFounder)"}:::founder','core'],
+    ['hmf["E-Mail an Teilnehmer: Absage durch Gründer<br/>Anhang: Quittung"]:::mail','core'],
+    ['accF["Gründer-Freigabe erteilt"]:::founder','core'],
+    ['dAuto{"Automatische VNB-Freigabe aktiviert?<br/>(vnbAutoAcceptParticipation)"}:::hub','core'],
+    ['dV2{"VNB-Endpoint<br/>Version?"}:::hub','api'],
+    ['val["Validierung am VNB-Endpoint v2<br/>(validateOnly-Aufruf)"]:::api','api'],
+    ['vRes{"Validierungs-<br/>Ergebnis"}:::hub','api'],
+    ['hm3["E-Mail an VNB: Prüfanfrage<br/>Anhang: Quittung"]:::mail','core'],
+    ['v1{"VNB prüft den Beitritt<br/>(Link acceptVnb / rejectVnb)"}:::vnb','core'],
+    ['hmv["E-Mail an Teilnehmer + Gründer: Absage durch VNB<br/>Anhang: Quittung"]:::mail','core'],
+    ['accV["VNB-Freigabe erteilt"]:::vnb','core'],
+    ['as2["Teilnehmer unterzeichnet den<br/>Vertrag elektronisch (Swisscom Sign)"]:::sign','core'],
+    ['h3["Teilnehmer speichern<br/>(VNB-System + JLS / LEGhub-CMS)"]:::erp','core'],
+    ['apiP["Endpoint-Aufrufe je Tenant:<br/>LEGhub-API v1 / v2 / Innosolv-API<br/>(Innosolv: Vertrag + Quittung ins DMS)"]:::api','api'],
+    ['h5{"Speicherung<br/>erfolgreich?"}:::hub','core'],
+    ['hm4["E-Mail an Teilnehmer + Gründer: Beitritt bestätigt<br/>Anhang: Vertrag (signiert) + Quittung"]:::mail','core'],
+    ['h6{"Wird die LEG<br/>jetzt aktiv?"}:::hub','core'],
+    ['hm5["E-Mail an Gründer: LEG ist aktiv<br/>Anhang: Vertrag (signiert)"]:::mail','core'],
+    ['hm6["E-Mail an Teilnehmer + Gründer: Absage, behebbar<br/>Anhang: Quittung"]:::mail','core'],
+    ['as3["Korrigieren und<br/>erneut absenden"]:::user','core'],
+    ['hm7["E-Mail an VNB: technischer Fehler<br/>Anhang: Quittung"]:::mail','core'],
+    ['vrtry["VNB: Speicherung erneut auslösen<br/>(Link retryVnb)"]:::vnb','core'],
+    ['t1["Test-Shortcut (nur Nicht-Prod):<br/>E-Mail test@example.com<br/>→ Gründer- und VNB-Freigabe übersprungen"]:::test','test'],
+    ['t2["Test-Shortcut (nur Nicht-Prod):<br/>Telefon +41234567890 (oder Konfig ohne Signatur)<br/>→ Signatur übersprungen"]:::test','test'],
+    ['adRestart["Admin · POST /restartParticipation<br/>(Header X-Api-Key)"]:::admin','admin'],
+    ['adPersist["Admin · POST /persistParticipationLeghub<br/>(X-Api-Key) – nur JLS / LEGhub-CMS"]:::admin','admin'],
+    ['adSig["Admin · POST /signatureProcessCompleted<br/>(X-Api-Key) – Signatur-Abschluss manuell"]:::admin','admin']
+  ], edges:[
+    ['as1 -- "Teilnehmer: DRAFT" --> h1','core'],
+    ['h1 --> hm1','core'],
+    ['h1 --> hm2','core'],
+    ['hm2 -- "Teilnehmer: WAITING_FOR_FOUNDER_APPROVAL" --> g1','core'],
+    ['g1 -- "freigeben" --> accF','core'],
+    ['g1 -- "ablehnen" --> hmf','core'],
+    ['accF --> dAuto','core'],
+    ['dAuto -- "ja" --> accV','core'],
+    ['dAuto -- "nein" --> dV2','api'],
+    ['dV2 -- "v2" --> val','api'],
+    ['val --> vRes','api'],
+    ['vRes -- "ohne Fehler" --> accV','api'],
+    ['vRes -- "VALIDATE_VIA_MAIL" --> hm3','api'],
+    ['vRes -- "Fehler" --> hmv','api'],
+    ['dV2 -- "v1 / Innosolv" --> hm3','api'],
+    ['dAuto -- "nein (manuell)" --> hm3','noapi'],
+    ['hm3 -- "Teilnehmer: WAITING_FOR_VNB_APPROVAL" --> v1','core'],
+    ['v1 -- "freigeben" --> accV','core'],
+    ['v1 -- "ablehnen" --> hmv','core'],
+    ['accV -- "→ WAITING_FOR_SIGNATURE" --> as2','core'],
+    ['as2 --> h3','core'],
+    ['h3 --> h5','core'],
+    ['h3 -.-> apiP','api'],
+    ['h5 -- "Erfolg → Teilnehmer: ACTIVE (LEG vollständig)<br/>bzw. WAITING_FOR_PRODUCER / WAITING_FOR_CONSUMER" --> hm4','core'],
+    ['hm4 --> h6','core'],
+    ['h6 -- "ja → LEG: ACTIVE" --> hm5','core'],
+    ['h5 -- "nein, behebbar" --> hm6','core'],
+    ['hm6 --> as3','core'],
+    ['as3 --> as1','core'],
+    ['h5 -- "nein, technisch → Teilnehmer: ERROR" --> hm7','core'],
+    ['hm7 --> vrtry','core'],
+    ['vrtry --> h3','core'],
+    ['h1 -.-> t1','test','test'],
+    ['t1 -.-> accF','test','test'],
+    ['t1 -.-> accV','test','test'],
+    ['accV -.-> t2','test','test'],
+    ['t2 -.-> h3','test','test'],
+    ['adRestart -.-> h1','admin','admin'],
+    ['adPersist -.-> h3','admin','admin'],
+    ['adSig -.-> h3','admin','admin']
+  ]};
+
+  const state={api:false, test:false, admin:false};
+  function visible(cat){
+    if(cat==='core') return true;
+    if(cat==='api') return state.api;
+    if(cat==='test') return state.test;
+    if(cat==='admin') return state.admin;
+    if(cat==='noapi') return !state.api;
+    return true;
+  }
+  function build(spec){
+    const L=[spec.header];
+    spec.nodes.forEach(n=>{ if(visible(n[1])) L.push('  '+n[0]); });
+    const tIdx=[], aIdx=[]; let i=0;
+    spec.edges.forEach(e=>{ if(!visible(e[1])) return; L.push('  '+e[0]); if(e[2]==='test') tIdx.push(i); if(e[2]==='admin') aIdx.push(i); i++; });
+    CLASSDEFS.forEach(c=>L.push('  '+c));
+    if(tIdx.length) L.push('  linkStyle '+tIdx.join(',')+' stroke:#2e7d32,stroke-width:2px,stroke-dasharray:6 4;');
+    if(aIdx.length) L.push('  linkStyle '+aIdx.join(',')+' stroke:#c62828,stroke-width:2px,stroke-dasharray:6 4;');
+    return L.join('\n');
+  }
+
+  let rc=0;
+  async function renderFlow(elId, spec){
+    try{
+      const {svg}=await mermaid.render('mmd'+(rc++), build(spec));
+      document.getElementById(elId).innerHTML=svg;
+    }catch(e){ document.getElementById(elId).textContent='Render-Fehler: '+e.message; }
+  }
+  async function renderAll(){ await renderFlow('flow1', FLOW1); await renderFlow('flow2', FLOW2); }
+
+  function bindControls(){
+    const map={chkApi:'api', chkTest:'test', chkAdmin:'admin'};
+    Object.keys(map).forEach(id=>{
+      document.getElementById(id).addEventListener('change', e=>{ state[map[id]]=e.target.checked; renderAll(); });
+    });
+  }
+
+  // Vollbild-Overlay: Zoom (Mausrad) + Verschieben (Ziehen)
+  const overlay=document.createElement('div');
+  overlay.id='zoomOverlay';
+  overlay.innerHTML='<div id="zoomHintTop">Mausrad: Zoom · Ziehen: Verschieben · ESC: Schliessen</div>'+
+                    '<button id="zoomClose" aria-label="Schliessen">✕</button><div id="zoomInner"></div>';
+  document.body.appendChild(overlay);
+  const inner=overlay.querySelector('#zoomInner');
+  let scale=1, tx=0, ty=0, dragging=false, sx=0, sy=0, current=null;
+  function apply(){ if(current){ current.style.transformOrigin='0 0'; current.style.transform='translate('+tx+'px,'+ty+'px) scale('+scale+')'; } }
+  function closeZoom(){ overlay.classList.remove('open'); inner.innerHTML=''; current=null; }
+  function openZoom(svg){
+    const clone=svg.cloneNode(true);
+    let w=1400; const vb=clone.getAttribute('viewBox');
+    if(vb){ const p=vb.split(/[\s,]+/); if(p.length===4){ w=parseFloat(p[2]); } }
+    clone.removeAttribute('height'); clone.style.maxWidth='none'; clone.style.width=Math.round(w)+'px'; clone.style.height='auto';
+    inner.innerHTML=''; inner.appendChild(clone); current=clone; overlay.classList.add('open');
+    requestAnimationFrame(()=>{ const avail=inner.clientWidth-4; scale=Math.min(1, avail/w); tx=Math.max(0,(avail-w*scale)/2); ty=0; apply(); });
+  }
+  inner.addEventListener('wheel', e=>{ if(!current) return; e.preventDefault();
+    const rect=inner.getBoundingClientRect(); const mx=e.clientX-rect.left, my=e.clientY-rect.top;
+    const factor=e.deltaY<0?1.12:1/1.12; const ns=Math.min(8, Math.max(0.15, scale*factor));
+    tx=mx-(mx-tx)*(ns/scale); ty=my-(my-ty)*(ns/scale); scale=ns; apply(); }, {passive:false});
+  inner.addEventListener('mousedown', e=>{ if(!current) return; dragging=true; sx=e.clientX-tx; sy=e.clientY-ty; inner.classList.add('grabbing'); });
+  window.addEventListener('mousemove', e=>{ if(!dragging) return; tx=e.clientX-sx; ty=e.clientY-sy; apply(); });
+  window.addEventListener('mouseup', ()=>{ dragging=false; inner.classList.remove('grabbing'); });
+  overlay.addEventListener('click', e=>{ if(e.target===overlay || e.target.id==='zoomClose') closeZoom(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeZoom(); });
+  ['flow1','flow2'].forEach(id=>{
+    document.getElementById(id).addEventListener('click', ()=>{ const svg=document.getElementById(id).querySelector('svg'); if(svg) openZoom(svg); });
+  });
+
+  bindControls();
+  renderAll();
 </script>
 </body>
 </html>
