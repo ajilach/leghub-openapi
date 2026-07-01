@@ -129,6 +129,53 @@ paths:
         - BearerAuth:
             - write:leg
             - read:leg
+  /legs/{legId}:
+    put:
+      tags:
+        - leg
+      summary: An existing LEG is updated.
+      description: Updates an existing LEG, e.g. to report its endingDate upon dissolution
+      operationId: updateLeg
+      parameters:
+        - name: legId
+          in: path
+          description: The LEG ID as provided by LEGhub (leghubId)
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: The LEG object that needs to be updated.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Leg'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LegCreationResponse'
+        '400':
+          description: Invalid data provided
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth:
+            - write:leg
+            - read:leg
+        - BasicAuth:
+            - write:leg
+            - read:leg
+        - BearerAuth:
+            - write:leg
+            - read:leg
   /participants:
     post:
       tags:
@@ -179,37 +226,106 @@ paths:
         - BearerAuth:
             - write:leg
             - read:leg
-  # /measuringPoints/{measuringPointId}:
-  #   put:
-  #     tags:
-  #       - measuringPoint
-  #     summary: A new measuring point is added to a participation
-  #     description: Updates an existing measuring point in the system
-  #     operationId: createMeasuringPoint
-  #     requestBody:
-  #       description: Measuring point object that needs to be created
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/MeasuringPoint'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         description: Successful operation
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/MeasuringPointCreationResponse'
-  #       '400':
-  #         description: Invalid data provided
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/ErrorResponse'
-  #     security:
-  #       - apiKey:
-  #           - write:leg
-  #           - read:leg
+  /participants/{participantId}:
+    put:
+      tags:
+        - participant
+      summary: An existing participant is updated
+      description: Updates an existing participant, e.g. to report its endingDate upon exit from the LEG
+      operationId: updateParticipant
+      parameters:
+        - name: participantId
+          in: path
+          description: The participant ID as provided by LEGhub (leghubParticipantId)
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Participant object that needs to be updated
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Participant'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantCreationResponse'
+        '400':
+          description: Invalid data provided
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth:
+            - write:leg
+            - read:leg
+        - BasicAuth:
+            - write:leg
+            - read:leg
+        - BearerAuth:
+            - write:leg
+            - read:leg
+  /participants/{participantId}/measuringPoints/{measuringPointNumber}:
+    put:
+      tags:
+        - participant
+      summary: An existing measuring point of a participant is updated
+      description: Updates a single measuring point belonging to a participant, e.g. to report its endingDate upon exit
+      operationId: updateMeasuringPoint
+      parameters:
+        - name: participantId
+          in: path
+          description: The participant ID as provided by LEGhub (leghubParticipantId)
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: measuringPointNumber
+          in: path
+          description: The measuring point number as provided by the electricity network operator
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Measuring point object that needs to be updated
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasuringPoint'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeasuringPointUpdateResponse'
+        '400':
+          description: Invalid data provided
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth:
+            - write:leg
+            - read:leg
+        - BasicAuth:
+            - write:leg
+            - read:leg
+        - BearerAuth:
+            - write:leg
+            - read:leg
 components:
   schemas:
     Leg:
@@ -261,6 +377,10 @@ components:
           type: string
           format: date
           description: The date when the participation starts to be active (ISO format)
+        endingDate:
+          type: string
+          format: date
+          description: The date when the participation ends, e.g. due to a dissolution of the LEG (ISO format)
         foundingContractBase64:
           type: string
           description: The founding contract of the LEG, as a PDF and encoded in base64. As soon as this is provided, the LEG is active from an legal perspective.
@@ -424,6 +544,10 @@ components:
         startingDate:
           type: string
           format: date
+        endingDate:
+          type: string
+          format: date
+          description: The date when the measuring point leaves the participation (ISO format)
         power:
           type: number
           format: float
@@ -462,6 +586,10 @@ components:
           type: string
           format: date
           description: The date when the participant starts to be active (ISO format)
+        endingDate:
+          type: string
+          format: date
+          description: The date when the participant leaves the LEG (ISO format)
         contractBase64:
           type: string
           description: The contract of the participant, as a PDF and encoded in base64. Is always sent when validateOnly is false, and never sent when validateOnly is true.
@@ -481,6 +609,9 @@ components:
           type: string
           example: 123456-000001-P001
           description: An optional external id provided by the electricity network operator for the participant. Will only be persisted if `validateOnly` is false.
+    MeasuringPointUpdateResponse:
+      type: object
+      description: Response object for measuring point update
     LegCreationResponse:
       type: object
       description: Response object for participation creation
