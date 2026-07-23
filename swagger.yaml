@@ -33,7 +33,7 @@ info:
 
     ## Embedding the LEGhub Forms
 
-    Optionally, you can integrate the vZEV Checker (/vzev), LEG Checker (/leg-check), Founding Form (/founding) and Participation Form (/particpation) into your website using an iframe:
+    Optionally, you can integrate the vZEV Checker (/vzev), LEG Checker (/leg-check), Founding Form (/founding) and Participation Form (/participation) into your website using an iframe:
 
     (To integrate the test form, use the URL https://test.industry.leg.digital.deals instead)
 
