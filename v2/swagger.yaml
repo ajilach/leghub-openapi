@@ -73,7 +73,7 @@ info:
     The externalId will only be persisted if `validateOnly` is false.
 
   contact:
-    email: fabian.boesiger@ajila.com
+    email: jonas.furrer@ajila.com
   version: 2.0.0
 tags:
   - name: leg
@@ -377,10 +377,12 @@ components:
           type: string
           format: date
           description: The date when the participation starts to be active (ISO format)
+          example: "2026-12-01"
         endingDate:
           type: string
           format: date
           description: The date when the participation ends, e.g. due to a dissolution of the LEG (ISO format)
+          example: "2026-12-31"
         foundingContractBase64:
           type: string
           description: The founding contract of the LEG, as a PDF and encoded in base64. As soon as this is provided, the LEG is active from an legal perspective.
@@ -544,10 +546,12 @@ components:
         startingDate:
           type: string
           format: date
+          example: "2026-12-01"
         endingDate:
           type: string
           format: date
           description: The date when the measuring point leaves the participation (ISO format)
+          example: "2026-12-31"
         power:
           type: number
           format: float
@@ -586,10 +590,12 @@ components:
           type: string
           format: date
           description: The date when the participant starts to be active (ISO format)
+          example: "2026-12-01"
         endingDate:
           type: string
           format: date
           description: The date when the participant leaves the LEG (ISO format)
+          example: "2026-12-31"
         contractBase64:
           type: string
           description: The contract of the participant, as a PDF and encoded in base64. Is always sent when validateOnly is false, and never sent when validateOnly is true.
