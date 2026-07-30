@@ -273,7 +273,7 @@ paths:
         - BearerAuth:
             - write:leg
             - read:leg
-  /participants/{participantId}/measuringPoints/{measuringPointNumber}:
+  /measuringPoints/{measuringPointNumber}:
     put:
       tags:
         - participant
@@ -281,13 +281,6 @@ paths:
       description: Updates a single measuring point belonging to a participant, e.g. to report its endingDate upon exit
       operationId: updateMeasuringPoint
       parameters:
-        - name: participantId
-          in: path
-          description: The participant ID as provided by LEGhub (leghubParticipantId)
-          required: true
-          schema:
-            type: string
-            format: uuid
         - name: measuringPointNumber
           in: path
           description: The measuring point number as provided by the electricity network operator
