@@ -116,11 +116,11 @@ paths:
       parameters:
         - name: legId
           in: path
-          description: The LEG ID as provided by LEGhub (leghubId) or the external LEG ID (externalId)
+          description: The internal leg ID as provided by LEGhub (leghubId)
           required: true
           schema:
             type: string
-            format: string
+            format: uuid
       requestBody:
         description: The endingDate to set on the LEG
         content:

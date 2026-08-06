@@ -139,7 +139,7 @@ paths:
       parameters:
         - name: legId
           in: path
-          description: The LEG ID as provided by LEGhub (leghubId) or the external LEG ID (externalId)
+          description: The external LEG ID (externalId)
           required: true
           schema:
             type: string
