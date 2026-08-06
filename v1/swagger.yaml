@@ -107,33 +107,32 @@ paths:
             - write:leg
             - read:leg
   /legs/{legId}:
-    put:
+    patch:
       tags:
         - leg
-      summary: An existing LEG is updated.
+      summary: Setting the endingDate of a LEG
+      description: Updates an existing LEG in the system, to report its endingDate
       operationId: updateLeg
       parameters:
         - name: legId
           in: path
-          description: The LEG ID as provided by LEGhub (leghubId)
+          description: The LEG ID as provided by LEGhub (leghubId) or the external LEG ID (externalId)
           required: true
           schema:
             type: string
-            format: uuid
+            format: string
       requestBody:
-        description: The LEG object that needs to be updated.
+        description: The endingDate to set on the LEG
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Leg'
+              $ref: '#/components/schemas/LegEndingDateUpdate'
+            example:
+              endingDate: "2026-12-31"
         required: true
       responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LegCreationResponse'
+        '204':
+          description: Successful operation, no content returned
         '400':
           description: Invalid data provided
           content:
@@ -188,11 +187,11 @@ paths:
             - write:leg
             - read:leg
   /measuringPoints/{measuringPointNumber}:
-    put:
+    patch:
       tags:
         - measuringPoint
-      summary: An existing measuring point is updated
-      description: Updates an existing measuring point in the system, e.g. to report its endingDate
+      summary: Setting the endingDate of a measuring point
+      description: Updates an existing measuring point in the system, to report its endingDate
       operationId: updateMeasuringPoint
       parameters:
         - name: measuringPointNumber
@@ -202,19 +201,15 @@ paths:
           schema:
             type: string
       requestBody:
-        description: Measuring point object that needs to be updated
+        description: The endingDate to set on the measuring point
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MeasuringPoint'
+              $ref: '#/components/schemas/MeasuringPointEndingDateUpdate'
         required: true
       responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MeasuringPointCreationResponse'
+        '204':
+          description: Successful operation, no content returned
         '400':
           description: Invalid data provided
           content:
@@ -296,6 +291,17 @@ components:
           $ref: '#/components/schemas/Pricing'
         founder:
           $ref: '#/components/schemas/Contact'
+    LegEndingDateUpdate:
+      type: object
+      description: Request object to set the endingDate of a LEG
+      required:
+        - endingDate
+      properties:
+        endingDate:
+          type: string
+          format: date
+          description: The date when the participation ends, e.g. due to a dissolution of the LEG (ISO format)
+          example: "2026-12-31"
     Netzebene:
       type: object
       description: Network level information
@@ -477,6 +483,17 @@ components:
           $ref: '#/components/schemas/Address'
         owner:
           $ref: '#/components/schemas/Contact'
+    MeasuringPointEndingDateUpdate:
+      type: object
+      description: Request object to set the endingDate of a measuring point
+      required:
+        - endingDate
+      properties:
+        endingDate:
+          type: string
+          format: date
+          description: The date when the measuring point leaves the participation (ISO format)
+          example: "2026-12-31"
     MeasuringPointCreationResponse:
       type: object
       description: Response object for measuring point creation
