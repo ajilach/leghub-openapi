@@ -224,7 +224,7 @@ paths:
         - BearerAuth:
             - write:leg
             - read:leg
-  /measuringPoints/{measuringPointNumber}:
+  /legs/{legId}/measuringPoints/{measuringPointNumber}:
     patch:
       tags:
         - participant
@@ -232,6 +232,13 @@ paths:
       description: Updates an existing measuring point in the system, to report its endingDate
       operationId: updateMeasuringPoint
       parameters:
+        - name: legId
+          in: path
+          description: The external LEG ID (externalId)
+          required: true
+          schema:
+            type: string
+            format: string
         - name: measuringPointNumber
           in: path
           description: The measuring point number as provided by the electricity network operator
@@ -346,7 +353,11 @@ components:
         endingDate:
           type: string
           format: date
-          description: The date when the participation ends, e.g. due to a dissolution of the LEG (ISO format)
+          description: >-
+            The date when the participation ends, e.g. due to a dissolution of the LEG.
+            Send the date in ISO format (YYYY-MM-DD), e.g. "2026-12-31".
+            The endingDate always denotes the last second of the given day (23:59:59),
+            i.e. the LEG remains valid until the end of that day.
           example: "2026-12-31"
     Netzebene:
       type: object
@@ -522,7 +533,11 @@ components:
         endingDate:
           type: string
           format: date
-          description: The date when the measuring point leaves the participation (ISO format)
+          description: >-
+            The date when the measuring point leaves the participation.
+            Send the date in ISO format (YYYY-MM-DD), e.g. "2026-12-31".
+            The endingDate always denotes the last second of the given day (23:59:59),
+            i.e. the measuring point remains part of the participation until the end of that day.
           example: "2026-12-31"
     Participant:
       type: object
