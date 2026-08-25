@@ -139,6 +139,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errorCode: INVALID_ENDING_DATE
+                message: Invalid data provided
+                clientMessage: Für diese LEG ist bereits ein Enddatum definiert
       security:
         - ApiKeyAuth:
             - write:leg
@@ -223,6 +227,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errorCode: INVALID_ENDING_DATE
+                message: Invalid data provided
+                clientMessage: Für diesen Messpunkt ist bereits ein Enddatum definiert
+                measuringPointNumber: CH1234567890123456789012345678901
       security:
         - ApiKeyAuth:
             - write:leg
@@ -542,10 +551,15 @@ components:
           type: string
           example: Die Kundennummer ist unbekannt.
           description: A message that can be shown to the user
+        measuringPointNumber:
+          type: string
+          example: CH1234567890123456789012345678901
+          description: Optional measuring point number associated with the error
         errorCode:
           type: string
           enum:
             - INVALID_STARTING_DATE
+            - INVALID_ENDING_DATE
             - INVALID_ADDRESS
             - INVALID_PRICING
             - INVALID_MEASURING_POINT_NUMBER
