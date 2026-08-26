@@ -139,10 +139,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-              example:
-                errorCode: INVALID_ENDING_DATE
-                message: Invalid data provided
-                clientMessage: Für diese LEG ist bereits ein Enddatum definiert
+              examples:
+                alreadySet:
+                  summary: An endingDate is already set - the request is already satisfied
+                  description: >
+                    Answer this when the LEG already carries an endingDate. The caller treats it as
+                    success and continues, which is what makes a repeated request converge.
+                  value:
+                    errorCode: ENDING_DATE_ALREADY_SET
+                    message: Invalid data provided
+                    clientMessage: Für diese LEG ist bereits ein Enddatum definiert
+                invalidDate:
+                  summary: The submitted endingDate itself was refused - nothing was applied
+                  description: >
+                    Answer this when the date cannot be accepted, e.g. because it lies before the
+                    starting date. The caller aborts and does not persist the date.
+                  value:
+                    errorCode: INVALID_ENDING_DATE
+                    message: Invalid data provided
+                    clientMessage: Das Enddatum liegt vor dem Startdatum der LEG
       security:
         - ApiKeyAuth:
             - write:leg
@@ -227,11 +242,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-              example:
-                errorCode: INVALID_ENDING_DATE
-                message: Invalid data provided
-                clientMessage: Für diesen Messpunkt ist bereits ein Enddatum definiert
-                measuringPointNumber: CH1234567890123456789012345678901
+              examples:
+                alreadySet:
+                  summary: An endingDate is already set - the request is already satisfied
+                  description: >
+                    Answer this when the measuring point already carries an endingDate. The caller treats
+                    it as success and continues, which is what makes a repeated request converge.
+                  value:
+                    errorCode: ENDING_DATE_ALREADY_SET
+                    message: Invalid data provided
+                    clientMessage: Für diesen Messpunkt ist bereits ein Enddatum definiert
+                    measuringPointNumber: CH1234567890123456789012345678901
+                invalidDate:
+                  summary: The submitted endingDate itself was refused - nothing was applied
+                  description: >
+                    Answer this when the date cannot be accepted, e.g. because it lies before the
+                    starting date. The caller aborts and does not persist the date.
+                  value:
+                    errorCode: INVALID_ENDING_DATE
+                    message: Invalid data provided
+                    clientMessage: Das Enddatum liegt vor dem Startdatum des Messpunkts
+                    measuringPointNumber: CH1234567890123456789012345678901
       security:
         - ApiKeyAuth:
             - write:leg
@@ -560,6 +591,7 @@ components:
           enum:
             - INVALID_STARTING_DATE
             - INVALID_ENDING_DATE
+            - ENDING_DATE_ALREADY_SET
             - INVALID_ADDRESS
             - INVALID_PRICING
             - INVALID_MEASURING_POINT_NUMBER
@@ -571,7 +603,21 @@ components:
             - MEASURING_POINT_ADDRESS_MISMATCH
             - INAPPROPRIATE_NAME
             - OTHER
-          description: The type of error that occurred
+          description: >
+            The type of error that occurred.
+
+            Two codes must be kept apart when an endingDate is rejected, because the caller reacts
+            differently to them:
+
+            * `ENDING_DATE_ALREADY_SET` - the measuring point or LEG already carries an endingDate, so
+              the requested state is already in place. The caller treats this as success and continues
+              (it is the expected answer when a request is repeated after a failure on the caller's side,
+              and the endingDate PATCHes are not idempotent).
+            * `INVALID_ENDING_DATE` - the submitted date itself is not acceptable, e.g. it lies before the
+              starting date. The requested state was NOT applied and the caller aborts.
+
+            Never answer the already-set case with `INVALID_ENDING_DATE`: a repeated request would be
+            indistinguishable from a genuinely wrong date, and the caller could not converge.
   securitySchemes:
     BasicAuth:
       type: http
