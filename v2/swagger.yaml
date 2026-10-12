@@ -374,7 +374,12 @@ components:
           example: "2026-12-31"
         foundingContractBase64:
           type: string
-          description: The founding contract of the LEG, as a PDF and encoded in base64. As soon as this is provided, the LEG is active from an legal perspective.
+          description: >-
+            The founding contract of the LEG, as a PDF and encoded in base64.
+            As soon as this is provided, the LEG is active from a legal perspective.
+            For a LEG whose founder manages the contracts individually (individual contract
+            management), no contract is produced at all, so the field is absent.
+            Treat it as optional.
           example: JVBERi0xLjQKJcfs...
         referenceAddress:
           $ref: '#/components/schemas/Address'
@@ -617,7 +622,12 @@ components:
           example: "2026-12-31"
         contractBase64:
           type: string
-          description: The contract of the participant, as a PDF and encoded in base64. Is always sent when validateOnly is false, and never sent when validateOnly is true.
+          description: >-
+            The contract of the participant, as a PDF and encoded in base64.
+            Sent when validateOnly is false, and never sent when validateOnly is true.
+            Exception: for a LEG whose founder manages the contracts individually
+            (individual contract management), no contract is produced at all, so the field
+            is absent even when validateOnly is false. Treat it as optional.
           example: JVBERi0xLjQKJcfs...
         contact:
           $ref: '#/components/schemas/Contact'
